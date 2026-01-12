@@ -20,15 +20,25 @@ defineProps<{
 
 const wrapper = ref<HTMLElement | null>(null)
 
+const getScrollAmount = () => {
+    if (wrapper.value && wrapper.value.firstElementChild) {
+        const card = wrapper.value.firstElementChild as HTMLElement;
+        const style = window.getComputedStyle(wrapper.value);
+        const gap = parseFloat(style.gap) || 20;
+        return card.offsetWidth + gap;
+    }
+    return 400; 
+}
+
 const scrollLeft = () => {
     if(wrapper.value){
-        wrapper.value.scrollTo({left:wrapper.value.scrollLeft - 400, behavior: 'smooth'})
+        wrapper.value.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' })
     }
 }
 
 const scrollRight = () => {
     if(wrapper.value){
-        wrapper.value.scrollTo({left:wrapper.value.scrollLeft + 400, behavior: 'smooth'})
+        wrapper.value.scrollBy({ left: getScrollAmount(), behavior: 'smooth' })
     }
 }
 
@@ -69,9 +79,11 @@ const { data: tags } = await useAsyncData<Array<{id: string, name: string}>>('bl
         margin: 1rem 2rem;
         overflow-x: auto;
         scrollbar-width: none;
+        scroll-snap-type: x mandatory;
         >a{
             flex: 1;
             min-width: 350px;
+            scroll-snap-align: start;
         }
     }
 </style>
